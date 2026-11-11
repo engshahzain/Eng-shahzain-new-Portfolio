@@ -20,6 +20,8 @@ export interface Project {
   image: string;
   heroImage: string;
   gallery: string[];
+  // Optional portrait showcase photo (only the FYP uses it for now)
+  showcaseImage?: string;
 }
 
 export const projects: Project[] = [
@@ -238,8 +240,14 @@ export const projects: Project[] = [
       "Developed an immersive 3D robotics environment and AI interaction interface, successfully bridging hardware execution with intelligent software processing.",
     tech: ["Hardware Integration", "AI", "Robotics", "Systems Engineering"],
     link: "#",
-    image: "/placeholders/ai-robot-mockup.png",
-    heroImage: "/placeholders/ai-robot-hero.png",
-    gallery: ["/placeholders/ai-robot-1.png", "/placeholders/ai-robot-2.png"],
+    image:
+      "https://res.cloudinary.com/dfqfl4scd/image/upload/f_auto/q_auto/1777813052213.png",
+    heroImage:
+      "https://res.cloudinary.com/dfqfl4scd/image/upload/f_auto/q_auto/1777813052213.png",
+    // Portrait photo shown in its own section on the detail page
+    showcaseImage:
+      "https://res.cloudinary.com/dfqfl4scd/image/upload/f_auto/q_auto/Robotic_Assistant_Project_Showcase.png",
+    // Empty on purpose: ai-robot-1.png / ai-robot-2.png don't exist yet
+    gallery: [],
   },
 ];

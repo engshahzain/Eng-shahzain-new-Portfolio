@@ -372,6 +372,53 @@ export default function ProjectDetail({ params }: ProjectDetailProps) {
         </section>
       </div>
 
+      {/* Showcase: portrait photo, only for projects with a showcaseImage (FYP) */}
+      {project.showcaseImage && (
+        <section
+          aria-label={`${project.title} showcase`}
+          className="mx-auto mt-8 w-full max-w-[1400px] px-4 md:mt-16 md:px-6"
+        >
+          <div className="grid items-center gap-8 border-t border-white/10 pt-16 md:pt-24 lg:grid-cols-12 lg:gap-12">
+            <figure className="lg:col-span-5">
+              <div className="relative mx-auto aspect-[1088/1445] w-full max-w-[520px] overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-emerald-950 via-neutral-900 to-black">
+                <Image
+                  src={project.showcaseImage}
+                  alt="Muhammad presenting the AI robotic assistant at the final year project showcase, with the robot prototype and project poster"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 520px"
+                  className="object-cover"
+                />
+              </div>
+            </figure>
+
+            <div className="lg:col-span-7">
+              <h2 className="text-xl font-medium text-emerald-300">
+                Project showcase
+              </h2>
+              <p className="mt-6 max-w-2xl text-2xl font-medium leading-snug tracking-tight text-white md:text-4xl">
+                Presenting the robot live: voice and text interaction,
+                AI-powered answers, and a Raspberry Pi core.
+              </p>
+              <ul className="mt-10 grid grid-cols-2 gap-x-6">
+                {[
+                  "AI-powered responses",
+                  "Voice & text interaction",
+                  "Python + OpenAI",
+                  "Raspberry Pi",
+                ].map((item) => (
+                  <li
+                    key={item}
+                    className="border-t border-white/15 py-4 text-lg font-medium md:text-xl"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Effect 2: gallery as a stack of cards */}
       {project.gallery && project.gallery.length > 0 && (
         <section

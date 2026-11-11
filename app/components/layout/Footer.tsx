@@ -131,7 +131,7 @@ export default function Footer() {
             </h4>
             <div className="flex flex-col gap-4 text-gray-400 items-start md:items-end">
               <a
-                href="https://github.com/yourusername"
+                href="https://github.com/engshahzain"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-2 hover:text-white transition-colors"
@@ -143,24 +143,12 @@ export default function Footer() {
                 />
               </a>
               <a
-                href="https://linkedin.com/in/yourusername"
+                href="www.linkedin.com/in/eng-muhammad-shahzain"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-2 hover:text-white transition-colors"
               >
                 LinkedIn{" "}
-                <ArrowUpRight
-                  size={14}
-                  className="group-hover:text-emerald-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-                />
-              </a>
-              <a
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-2 hover:text-white transition-colors"
-              >
-                Twitter / X{" "}
                 <ArrowUpRight
                   size={14}
                   className="group-hover:text-emerald-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
@@ -173,10 +161,7 @@ export default function Footer() {
         {/* Bottom Section: Copyright & Tech Badge */}
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-white/10 text-gray-500 text-xs md:text-sm">
           <div className="flex items-center gap-2">
-            <span>
-              © {new Date().getFullYear()} Enigma Systems / Engr Muhammmad
-              Shahzain
-            </span>
+            <span>© 2026 Enigma Systems / Engr Muhammmad Shahzain</span>
             <span className="hidden md:inline">All rights reserved.</span>
           </div>
 

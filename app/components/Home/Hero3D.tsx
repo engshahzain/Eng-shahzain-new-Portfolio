@@ -27,12 +27,7 @@ function ParticleField() {
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={particles.length / 3}
-          array={particles}
-          itemSize={3}
-        />
+        <bufferAttribute attach="attributes-position" args={[particles, 3]} />
       </bufferGeometry>
       <pointsMaterial
         size={0.02}

@@ -5,13 +5,15 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Check, Copy, Loader2 } from "lucide-react";
 
 // --- Edit these ---
-const WEB3FORMS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY"; // Paste your Web3Forms access key
-const EMAIL = "engmuhammadshahzain@gmail.com"; // Use the address you really read
+const EMAIL = "engmuhammadshahzain@gmail.com"; // Public display / direct mailto address
 const REPLY_TIME = "24 hours"; // Only promise what you will keep
 const AVAILABLE = true; // Set to false to hide the "taking new projects" line
 const socials = [
-  { name: "LinkedIn", href: "" }, // Paste your profile URLs. Empty ones are hidden.
-  { name: "GitHub", href: "" },
+  {
+    name: "LinkedIn",
+    href: "https://www.linkedin.com/in/eng-muhammad-shahzain",
+  },
+  { name: "GitHub", href: "https://github.com/engshahzain" },
 ];
 
 const projectTypes = [
@@ -101,24 +103,22 @@ export default function ContactPage() {
     setStatus("submitting");
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
         body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: `New project inquiry from ${name}`,
-          from_name: name,
+          name,
           email,
-          project_type: projectType,
+          projectType,
           message,
+          trap,
         }),
       });
 
       if (response.ok) {
-        setSentTo({ name: name.split(" ")[0], email });
+        setSentTo({ name: name.trim().split(" ")[0], email });
         setStatus("success");
         setName("");
         setEmail("");

@@ -5,8 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   motion,
+  useMotionValue,
   useReducedMotion,
   useScroll,
+  useSpring,
   useTransform,
   type MotionValue,
 } from "framer-motion";
@@ -114,7 +116,7 @@ export default function AboutPage() {
   const reduce = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
 
-  // The big name sits behind the portrait and drifts more slowly than the page, which creates depth
+  // Scroll depth: the big name drifts more slowly than the page
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
@@ -125,50 +127,99 @@ export default function AboutPage() {
     reduce ? ["0px", "0px"] : ["0px", "160px"],
   );
 
+  // Minimal 3D: the mouse position (-0.5 to 0.5) tilts the portrait a few degrees
+  // and shifts each layer by a different amount, so the layers separate in depth.
+  // Touch devices and reduced-motion users get the static version.
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, { stiffness: 110, damping: 20, mass: 0.4 });
+  const sy = useSpring(my, { stiffness: 110, damping: 20, mass: 0.4 });
+
+  const rotateY = useTransform(sx, [-0.5, 0.5], [-7, 7]);
+  const rotateX = useTransform(sy, [-0.5, 0.5], [4, -4]);
+  const nameX = useTransform(sx, [-0.5, 0.5], [22, -22]); // furthest back, moves most
+  const archX = useTransform(sx, [-0.5, 0.5], [10, -10]);
+  const glowX = useTransform(sx, [-0.5, 0.5], [-28, 28]);
+
+  function handlePointerMove(e: React.PointerEvent<HTMLElement>) {
+    if (reduce || e.pointerType !== "mouse") return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    mx.set((e.clientX - rect.left) / rect.width - 0.5);
+    my.set((e.clientY - rect.top) / rect.height - 0.5);
+  }
+
+  function handlePointerLeave() {
+    mx.set(0);
+    my.set(0);
+  }
+
   return (
     <div className="min-h-screen overflow-x-clip bg-black text-white selection:bg-emerald-400 selection:text-black">
-      {/* Hero: the name sits behind the portrait */}
+      {/* Hero: name and arch sit behind the portrait */}
       <header
         ref={heroRef}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
         className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pt-24"
       >
-        {/* Soft light behind the person (static CSS) */}
-        <div
+        {/* Soft light behind the person */}
+        <motion.div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_45%_55%_at_50%_45%,rgba(16,185,129,0.28),transparent_70%)]"
+          style={{ x: reduce ? 0 : glowX }}
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_45%_55%_at_50%_45%,rgba(16,185,129,0.32),transparent_70%)]"
         />
 
         {/* Sized by the portrait, so the name always lines up with the head */}
-        <div className="relative mx-auto aspect-[566/807] h-[min(80svh,130vw)]">
+        <div className="relative mx-auto aspect-[1088/1445] h-[min(80svh,130vw)]">
+          {/* Layer 1 (back): arch. A light backdrop so the black gown does not melt into the page */}
           <motion.div
-            style={{ y: nameY }}
-            className="absolute left-1/2 top-[22%] z-0 -translate-x-1/2 -translate-y-1/2 will-change-transform"
-          >
-            <motion.h1
-              initial={reduce ? false : { opacity: 0, scale: 1.06 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="whitespace-nowrap text-[clamp(5rem,18vw,17rem)] font-semibold leading-none tracking-tighter"
-            >
-              <span className="sr-only">M. </span>
-              Shahzain
-            </motion.h1>
-          </motion.div>
+            aria-hidden
+            style={{ x: reduce ? 0 : archX }}
+            className="absolute inset-x-[4%] bottom-0 top-[9%] z-0 rounded-t-full border border-white/10 bg-gradient-to-b from-emerald-400/25 via-emerald-500/10 to-transparent"
+          />
 
+          {/* Layer 2: the name. The outer div centres it, the inner one moves */}
+          <div className="absolute inset-x-0 top-[20%] z-[1] flex -translate-y-1/2 justify-center">
+            <motion.div
+              style={{ x: reduce ? 0 : nameX, y: nameY }}
+              className="will-change-transform"
+            >
+              <motion.h1
+                initial={reduce ? false : { opacity: 0, scale: 1.06 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                className="whitespace-nowrap text-[clamp(5rem,18vw,17rem)] font-semibold leading-none tracking-tighter"
+              >
+                <span className="sr-only">M. </span>
+                Shahzain
+              </motion.h1>
+            </motion.div>
+          </div>
+
+          {/* Layer 3 (front): the portrait, tilting with the mouse */}
           <motion.div
             initial={reduce ? false : { opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
             className="absolute inset-0 z-10"
           >
-            <Image
-              src="/shahzain-cutout.webp"
-              alt="M. Shahzain, computer engineer, with his arms crossed"
-              fill
-              priority
-              sizes="(max-width: 768px) 80vw, 520px"
-              className="object-contain object-bottom"
-            />
+            <motion.div
+              style={
+                reduce
+                  ? undefined
+                  : { rotateX, rotateY, transformPerspective: 1100 }
+              }
+              className="absolute inset-0 will-change-transform"
+            >
+              <Image
+                src="https://res.cloudinary.com/dfqfl4scd/image/upload/f_auto/q_auto/shahzain-cutout.webp"
+                alt="M. Shahzain, computer engineer, in his graduation gown and cap, holding his diploma"
+                fill
+                priority
+                sizes="(max-width: 768px) 85vw, 560px"
+                className="object-contain object-bottom"
+              />
+            </motion.div>
           </motion.div>
 
           {/* Fades the cropped bottom of the portrait into the page */}
